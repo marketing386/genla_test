@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENLA | AI Solutions</title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Подключили Inter с жирными начертаниями (600, 700, 800) как на референсе -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. НАСТРОЙКИ И ПЕРЕМЕННЫЕ --- */
+        :root {
+            --brand-pink: #ff006a;
+            --brand-pink-glow: rgba(255, 0, 106, 0.4);
+            
+            /* Шрифт заголовков теперь Inter, как на фото */
+            --font-heading: 'Inter', sans-serif; 
+            --font-body: 'Inter', sans-serif;
+            
+            --ease-out: cubic-bezier(0.19, 1, 0.22, 1);
+            --transition: 0.5s var(--ease-out);
+        }
+
+        /* LIGHT THEME */
+        [data-theme="light"] {
+            --bg-color: #ffffff; /* Чистый белый, как на референсе */
+            --text-color: #050505; /* Почти черный для контраста */
+            --text-muted: #555560;
+            
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08); /* Чуть темнее границы */
+            --glass-border-highlight: rgba(255, 255, 255, 0.9);
+            --glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --input-bg: rgba(245, 245, 247, 1);
+            --line-color: rgba(255, 0, 106, 0.08); /* Очень легкая сетка */
+            --dot-color: rgba(255, 0, 106, 0.6);
+        }
+
+        /* DARK THEME */
+        [data-theme="dark"] {
+            --bg-color: #0b0b0f;
+            --text-color: #f0f0f0;
+            --text-muted: #9ca3af;
+            
+            --glass-bg: rgba(20, 20, 25, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-highlight: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+            
+            --nav-bg: rgba(11, 11, 15, 0.85);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --line-color: rgba(255, 0, 106, 0.15);
+            --dot-color: rgba(255, 0, 106, 0.6);
+        }
+
+        /* BASE */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
+        @media (pointer: coarse) { *, *::before, *::after { cursor: auto; } }
+        
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3 { font-family: var(--font-heading); line-height: 1.1; font-weight: 700; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+
+        /* LOGO STYLE */
+        .logo {
+            font-family: "Comfortaa", system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            color: var(--brand-pink);
+            text-transform: lowercase;
+            display: inline-flex;
+            align-items: baseline;
+            z-index: 101;
+            position: relative;
+        }
+        .logo-n { margin-left: -0.02em; }
+        .logo-l { transform: scaleY(1.15); transform-origin: bottom; margin-left: -0.01em; display: inline-block; }
+
+        /* --- UI COMPONENTS --- */
+        .container { 
+            width: 100%; 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+        }
+        
+        /* PREMIUM GLASS CARD */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-border-highlight);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--glass-shadow);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .glass:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -12px var(--brand-pink-glow);
+            border-color: rgba(255, 0, 106, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; justify-content: center; align-items: center;
+            padding: 16px 36px; border-radius: 100px;
+            font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;
+            transition: 0.3s; cursor: pointer;
+        }
+        .btn-primary {
+            background: var(--brand-pink); color: #fff;
+            box-shadow: 0 10px 25px rgba(255, 0, 106, 0.3);
+            border: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 0, 106, 0.5);
+        }
+        .btn-secondary {
+            border: 1px solid var(--text-muted); color: var(--text-color);
+            background: transparent;
+        }
+        .btn-secondary:hover { border-color: var(--brand-pink); color: var(--brand-pink); }
+
+        /* Cursor */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            background: var(--brand-pink); border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); mix-blend-mode: exclusion; transition: transform 0.1s; opacity: 0;
+        }
+        body.hovering #cursor { transform: translate(-50%, -50%) scale(2.5); background: transparent; border: 2px solid var(--brand-pink); mix-blend-mode: normal; }
+
+        /* Canvas */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            padding: 24px 0; background: var(--nav-bg); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border); transition: 0.3s;
+        }
+        .header.scrolled { padding: 16px 0; }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        
+        .nav { display: flex; gap: 40px; }
+        .nav-link { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; position: relative; }
+        .nav-link::after { content:''; position: absolute; bottom:-4px; left:0; width:0; height:2px; background:var(--brand-pink); transition: 0.3s; }
+        .nav-link:hover { opacity: 1; color: var(--brand-pink); }
+        .nav-link:hover::after { width: 100%; }
+        
+        .header-controls { display: flex; gap: 20px; align-items: center; }
+        #theme-btn {
+            background: none; border: 1px solid var(--glass-border); border-radius: 50%;
+            width: 44px; height: 44px; color: var(--text-color); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        #theme-btn:hover { border-color: var(--brand-pink); color: var(--brand-pink); }
+
+        /* --- SECTIONS --- */
+        .section { padding: 140px 0; position: relative; }
+        .section-title { 
+            font-size: 3.5rem; 
+            margin-bottom: 70px; 
+            position: relative; 
+            display: inline-block;
+            letter-spacing: -0.02em;
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: -12px; left: 0; width: 80px; height: 4px; background: var(--brand-pink);
+        }
+
+        /* --- HERO (ОБНОВЛЕННЫЙ) --- */
+        .hero { 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            padding-top: 80px; 
+            text-align: left; /* Как на референсе */
+        }
+        
+        .hero-content { 
+            max-width: 900px; /* Ограничиваем ширину, чтобы текст не плыл */
+        } 
+        
+        .hero h1 { 
+            font-family: 'Inter', sans-serif;
+            font-size: 4.5rem; /* Крупно как на фото */
+            line-height: 1.1; 
+            margin-bottom: 30px; 
+            font-weight: 800; /* Жирное начертание */
+            letter-spacing: -0.03em; /* Плотный кернинг */
+            color: var(--text-color);
+        }
+
+        /* Класс чтобы текст не резало (padding-bottom + line-height) */
+        .highlight-text {
+            background: linear-gradient(135deg, var(--text-color) 0%, var(--brand-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
+            
+            /* ФИКС ОБРЕЗАНИЯ ТЕКСТА */
+            padding-bottom: 0.1em; 
+            display: inline-block;
+            line-height: 1.25;
+        }
+
+        .hero p { 
+            font-size: 1.25rem; 
+            color: var(--text-muted); 
+            max-width: 650px; 
+            margin-bottom: 48px; 
+            font-weight: 400; 
+            line-height: 1.6;
+        }
+        
+        /* Grids */
+        .grid-3 { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 30px; 
+            align-items: stretch;
+        }
+        .grid-2 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 60px; 
+            align-items: center;
+        }
+
+        /* Icons */
+        .idea-icon-box {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: rgba(255, 0, 106, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 24px; color: var(--brand-pink); transition: 0.3s;
+        }
+        .glass:hover .idea-icon-box { background: var(--brand-pink); color: #fff; transform: scale(1.1); }
+        .idea-icon-box svg { width: 28px; height: 28px; stroke-width: 2; }
+
+        .glass h3 { font-size: 1.5rem; margin-bottom: 12px; font-weight: 700; }
+        .glass p { font-size: 1rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* Stats */
+        .stat-card { text-align: center; justify-content: center; align-items: center; }
+        .stat-num { font-size: 3.5rem; color: var(--brand-pink); font-family: var(--font-heading); display: block; margin-bottom: 8px; font-weight: 800;}
+        
+        /* Services */
+        .service-list li { 
+            padding: 12px 0; border-bottom: 1px solid rgba(128,128,128,0.1); 
+            font-size: 1rem; display: flex; align-items: center;
+        }
+        .service-list li::before {
+            content: ''; width: 6px; height: 6px; background: var(--brand-pink); border-radius: 50%; margin-right: 12px;
+        }
+        
+        /* Leadership */
+        .leader-card { flex-direction: row; gap: 30px; align-items: center; }
+        .leader-img { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(45deg, #ddd, #999); flex-shrink: 0; }
+
+        /* Contact Section */
+        .contact-wrap { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; }
+        .contact-info-block { padding: 40px; }
+        .contact-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; font-size: 1.1rem; }
+        .contact-icon { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: var(--brand-pink); }
+
+        /* MODAL */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+            z-index: 2000; opacity: 0; visibility: hidden;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.4s ease;
+        }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            width: 100%; max-width: 480px; padding: 50px;
+            background: var(--bg-color); border: 1px solid var(--glass-border);
+            border-radius: 24px; position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transform: scale(0.95); transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .modal.active .modal-content { transform: scale(1); }
+        .close-modal {
+            position: absolute; top: 20px; right: 24px; font-size: 1.5rem;
+            cursor: pointer; color: var(--text-muted); transition: 0.2s;
+        }
+        .close-modal:hover { color: var(--brand-pink); transform: rotate(90deg); }
+        
+        .form-group { margin-bottom: 24px; }
+        .form-input {
+            width: 100%; padding: 18px; background: var(--input-bg);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            font-family: inherit; color: var(--text-color); font-size: 1rem;
+            transition: 0.3s;
+        }
+        .form-input:focus { outline: none; border-color: var(--brand-pink); box-shadow: 0 0 0 4px rgba(255, 0, 106, 0.1); }
+
+        /* PRELOADER */
+        #preloader {
+            position: fixed; inset: 0; background: var(--bg-color); z-index: 10000;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(255, 0, 106, 0.1);
+            border-top-color: var(--brand-pink); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin-top: 24px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.19, 1, 0.22, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        
+        /* Footer */
+        footer { padding: 50px 0; border-top: 1px solid var(--glass-border); color: var(--text-muted); font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .grid-3, .grid-2, .contact-wrap { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 3rem; }
+            .nav { display: none; }
+            .section { padding: 80px 0; }
+            .container { padding: 0 24px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="logo" style="font-size: 48px;">
+            ge<span class="logo-n">n</span><span class="logo-l">l</span>a
+        </div>
+        <div class="spinner"></div>
+    </div>
+
+    <!-- CURSOR -->
+    <div id="cursor"></div>
+
+    <!-- BACKGROUND -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-inner">
+            <a class="logo" href="/" aria-label="genla">
+              ge<span class="logo-n">n</span><span class="logo-l">l</span>a
+            </a>
+
+            <nav class="nav">
+                <a href="#about" class="nav-link">О нас</a>
+                <a href="#idea" class="nav-link">Идеология</a>
+                <a href="#services" class="nav-link">Услуги</a>
+                <a href="#team" class="nav-link">Команда</a>
+                <a href="#contacts" class="nav-link">Контакты</a>
+            </nav>
+
+            <div class="header-controls">
+                <button id="theme-btn" aria-label="Сменить тему">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <button class="btn btn-primary open-modal">Записаться</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (Стиль референса 1 и 2) -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1 class="reveal">
+                GENLA — AI-решения,<br>
+                которые ускоряют<br>
+                рост бизнеса
+            </h1>
+            <p class="reveal delay-1">
+                Автоматизация, аналитика и интеллектуальные продукты для компаний, которым важны скорость и качество.
+            </p>
+            <div class="reveal delay-2" style="display:flex; gap:24px;">
+                <button class="btn btn-primary open-modal">Начать проект</button>
+                <a href="#services" class="btn btn-secondary">Узнать больше</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title reveal">О компании</h2>
+            <div class="grid-2">
+                <div class="reveal">
+                    <p style="font-size:1.15rem; color:var(--text-muted); margin-bottom:24px;">
+                        Мы — архитекторы цифрового будущего. С 2018 года GENLA задает стандарты в области корпоративного AI, объединяя математическую точность с эстетикой кода.
+                    </p>
+                    <p style="font-size:1.15rem; color:var(--text-muted);">
+                        Наши решения работают там, где важна скорость и безотказность: от высоконагруженных финтех-платформ до систем медицинской диагностики.
+                    </p>
+                </div>
+                <div class="grid-2" style="gap: 30px;">
+                    <div class="glass stat-card reveal delay-1">
+                        <span class="stat-num">120+</span>
+                        <span style="color:var(--text-muted);">Проектов</span>
+                    </div>
+                    <div class="glass stat-card reveal delay-2">
+                        <span class="stat-num">$50M</span>
+                        <span style="color:var(--text-muted);">Экономия</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IDEOLOGY SECTION -->
+    <section class="section" id="idea">
+        <div class="container">
+            <h2 class="section-title reveal">Идеология</h2>
+            <div class="grid-3">
+                <div class="glass reveal">
+                    <div class="idea-icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    </div>
+                    <h3>Скорость</h3>
+                    <p>Мгновенная обработка данных и быстрое внедрение решений без потери качества инфраструктуры.</p>
+                </div>
+                <div class="glass reveal delay-1">
+                    <div class="idea-icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"></path></svg>
+                    </div>
+                    <h3>Премиальность</h3>
+                    <p>Чистая архитектура кода, строгая безопасность и дизайн интерфейсов, который вдохновляет.</p>
+                </div>
+                <div class="glass reveal delay-2">
+                    <div class="idea-icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+                    </div>
+                    <h3>Инновации</h3>
+                    <p>Используем только проверенные SOTA (State-of-the-Art) модели нейронных сетей.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section class="section" id="services">
+        <div class="container">
+            <h2 class="section-title reveal">Услуги</h2>
+            <div class="grid-3">
+                <div class="glass reveal">
+                    <h3>AI-Консалтинг</h3>
+                    <ul class="service-list" style="margin-top:20px;">
+                        <li>Аудит бизнес-процессов</li>
+                        <li>Стратегия внедрения AI</li>
+                        <li>Обучение топ-менеджмента</li>
+                    </ul>
+                </div>
+                <div class="glass reveal delay-1">
+                    <h3>Разработка</h3>
+                    <ul class="service-list" style="margin-top:20px;">
+                        <li>Умные чат-боты и агенты</li>
+                        <li>Предиктивная аналитика</li>
+                        <li>Computer Vision системы</li>
+                    </ul>
+                </div>
+                <div class="glass reveal delay-2">
+                    <h3>Автоматизация</h3>
+                    <ul class="service-list" style="margin-top:20px;">
+                        <li>Интеграция с CRM/ERP</li>
+                        <li>Автоматическая генерация</li>
+                        <li>RPA роботизация</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEADERSHIP SECTION -->
+    <section class="section" id="team">
+        <div class="container">
+            <h2 class="section-title reveal">Руководство</h2>
+            <div class="grid-2">
+                <div class="glass leader-card reveal">
+                    <div class="leader-img"></div>
+                    <div>
+                        <h3>Александр В.</h3>
+                        <span style="color:var(--brand-pink); font-size:0.9rem; font-weight:600; text-transform:uppercase;">CEO & Founder</span>
+                        <p style="color:var(--text-muted); font-style:italic; margin-top:8px;">«Технологии меняют правила игры»</p>
+                    </div>
+                </div>
+                <div class="glass leader-card reveal delay-1">
+                    <div class="leader-img" style="background: linear-gradient(45deg, #aaa, #777);"></div>
+                    <div>
+                        <h3>Елена М.</h3>
+                        <span style="color:var(--brand-pink); font-size:0.9rem; font-weight:600; text-transform:uppercase;">CTO</span>
+                        <p style="color:var(--text-muted); font-style:italic; margin-top:8px;">«Код должен быть совершенным»</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTS SECTION -->
+    <section class="section" id="contacts">
+        <div class="container">
+            <h2 class="section-title reveal">Контакты</h2>
+            <div class="contact-wrap glass" style="padding: 0; overflow:hidden;">
+                <div class="contact-info-block reveal">
+                    <h3>Наши контакты</h3>
+                    <p style="color:var(--text-muted); margin-bottom:32px;">Мы всегда открыты к диалогу. Свяжитесь с нами для обсуждения вашего проекта.</p>
+                    
+                    <div class="contact-row">
+                        <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                        <span>Москва, Пресненская наб., 12</span>
+                    </div>
+                    <div class="contact-row">
+                        <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.12 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+                        <span>+7 (999) 000-00-00</span>
+                    </div>
+                    <div class="contact-row">
+                        <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+                        <span>hello@genla.ai</span>
+                    </div>
+                </div>
+                
+                <div class="reveal delay-1" style="background: rgba(255,0,106,0.03); padding: 40px; display:flex; flex-direction:column; justify-content:center;">
+                    <h3 style="margin-bottom:16px;">Готовы начать?</h3>
+                    <p style="margin-bottom:24px; color:var(--text-muted);">Заполните форму, и мы подготовим для вас персональное предложение.</p>
+                    <button class="btn btn-primary open-modal" style="width:100%;">Оставить заявку</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="logo" style="font-size:24px;">ge<span class="logo-n">n</span><span class="logo-l">l</span>a</div>
+            <div>© 2024 GENLA. Все права защищены.</div>
+        </div>
+    </footer>
+
+    <!-- MODAL FORM -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 style="margin-bottom: 30px; text-align:center;">Обсудить проект</h3>
+            <form id="modalForm">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Ваше имя" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Телефон или Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-input" rows="3" placeholder="Краткое описание задачи"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. PRELOADER
+            const preloader = document.getElementById('preloader');
+            window.onload = () => {
+                setTimeout(() => {
+                    preloader.style.opacity = '0';
+                    setTimeout(() => {
+                        preloader.style.display = 'none';
+                        triggerScrollAnimations();
+                    }, 600);
+                }, 800);
+            };
+
+            // 2. MODAL LOGIC
+            const modal = document.getElementById('modal');
+            const openBtns = document.querySelectorAll('.open-modal');
+            const closeBtn = document.querySelector('.close-modal');
+            const modalForm = document.getElementById('modalForm');
+
+            openBtns.forEach(btn => btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+            }));
+
+            closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+
+            modalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const btn = modalForm.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = "Отправка...";
+                setTimeout(() => {
+                    alert("Спасибо! Мы свяжемся с вами в ближайшее время.");
+                    modal.classList.remove('active');
+                    btn.innerText = originalText;
+                    modalForm.reset();
+                }, 1000);
+            });
+
+            // 3. THEME TOGGLE
+            const themeBtn = document.getElementById('theme-btn');
+            let theme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', theme);
+
+            themeBtn.addEventListener('click', () => {
+                theme = theme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+
+            // 4. SCROLL ANIMATIONS
+            const revealElements = document.querySelectorAll('.reveal');
+            function triggerScrollAnimations() {
+                const triggerBottom = window.innerHeight * 0.85;
+                revealElements.forEach(el => {
+                    const top = el.getBoundingClientRect().top;
+                    if(top < triggerBottom) el.classList.add('active');
+                });
+            }
+            window.addEventListener('scroll', triggerScrollAnimations);
+
+            // 5. HEADER SCROLL
+            const header = document.querySelector('.header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 50);
+            });
+
+            // 6. CUSTOM CURSOR
+            const cursor = document.getElementById('cursor');
+            let mx = 0, my = 0;
+            let cx = 0, cy = 0;
+            document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.opacity = '1'; });
+            
+            function animateCursor() {
+                cx += (mx - cx) * 0.15;
+                cy += (my - cy) * 0.15;
+                cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            document.querySelectorAll('a, button, input').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+
+            // 7. CANVAS BACKGROUND (Connected Neural Net)
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            let particles = [];
+
+            function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.4;
+                    this.vy = (Math.random() - 0.5) * 0.4;
+                    this.size = Math.random() * 2 + 1;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if(this.x < 0 || this.x > w) this.vx *= -1;
+                    if(this.y < 0 || this.y > h) this.vy *= -1;
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                const count = window.innerWidth < 800 ? 40 : 80;
+                for(let i=0; i<count; i++) particles.push(new Particle());
+            }
+
+            function animateCanvas() {
+                ctx.clearRect(0, 0, w, h);
+                const style = getComputedStyle(document.body);
+                const dotColor = style.getPropertyValue('--dot-color').trim();
+                const lineColor = style.getPropertyValue('--line-color').trim();
+                
+                ctx.fillStyle = dotColor;
+                ctx.strokeStyle = lineColor;
+
+                for(let i=0; i<particles.length; i++) {
+                    let p = particles[i];
+                    p.update();
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                    ctx.fill();
+
+                    // Connect lines
+                    for(let j=i+1; j<particles.length; j++) {
+                        let p2 = particles[j];
+                        let dist = Math.sqrt((p.x-p2.x)**2 + (p.y-p2.y)**2);
+                        if(dist < 150) {
+                            ctx.beginPath();
+                            ctx.lineWidth = 1 - (dist/150);
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animateCanvas);
+            }
+
+            window.addEventListener('resize', () => { resize(); initParticles(); });
+            resize();
+            initParticles();
+            animateCanvas();
+        });
+    </script>
+</body>
+</html>
